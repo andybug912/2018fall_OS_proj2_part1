@@ -29,6 +29,12 @@ public class ServerThread extends Thread {
                     socket.close();
                     return;
                 }
+                else if (message.getTitle().equals("INDEX_HELPER")) {
+
+                }
+                else if (message.getTitle().equals("QUERY_HELPER")) {
+                    
+                }
             }
         }
         catch (Exception e) {
