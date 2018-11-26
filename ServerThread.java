@@ -23,6 +23,7 @@ public class ServerThread extends Thread {
                 }
                 else if (message.getTitle().equals("QUERY")){
                     System.out.println("Pending to query");
+                    System.out.println(message.getKeyWords());
                 }
                 else if (message.getTitle().equals("DISCONNECT")) {
                     System.out.println("Disconnect from client");

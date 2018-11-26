@@ -1,12 +1,23 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class Message {
+public class Message implements Serializable {
     private String title;
     private String pathToBeIndexed;
     private List<String> keyWords;
 
     public Message(String title) {
         this.title = title;
+    }
+
+    public Message(String title,String pathToBeIndexed){
+        this.title = title;
+        this.pathToBeIndexed = pathToBeIndexed;
+    }
+
+    public Message(String title, List<String> keyWords){
+        this.title = title;
+        this.keyWords = keyWords;
     }
 
     public String getTitle() {
