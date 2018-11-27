@@ -20,6 +20,7 @@ public class ServerThread extends Thread {
                 Message message = (Message) input.readObject();
                 if (message.getTitle().equals("INDEX")) {
                     System.out.println("Pending to index");
+
                 }
                 else if (message.getTitle().equals("QUERY")){
                     System.out.println("Pending to query");
@@ -31,10 +32,18 @@ public class ServerThread extends Thread {
                     return;
                 }
                 else if (message.getTitle().equals("INDEX_HELPER")) {
-
+                    this.server.indexingHelperSocketList.add(socket);
+                    this.server.indexingHelperInputList.add(input);
+                    this.server.indexingHelperOutputList.add(output);
+                    Message reply = new Message("CONNECTED");
+                    output.writeObject(reply);
                 }
                 else if (message.getTitle().equals("QUERY_HELPER")) {
-                    
+                    this.server.queryHelperSocketList.add(socket);
+                    this.server.queryHelperInputList.add(input);
+                    this.server.queryHelperOutputList.add(output);
+                    Message reply = new Message("CONNECTED");
+                    output.writeObject(reply);
                 }
             }
         }

@@ -1,3 +1,5 @@
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -5,15 +7,25 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class TinyGoogleServer {
-    private List<IndexingHelper> indexingHelperList;
-    private List<QueryHelper> queryHelperList;
+    public List<Socket> indexingHelperSocketList;
+    public List<ObjectInputStream> indexingHelperInputList;
+    public List<ObjectOutputStream> indexingHelperOutputList;
+    public List<Socket> queryHelperSocketList;
+    public List<ObjectInputStream> queryHelperInputList;
+    public List<ObjectOutputStream> queryHelperOutputList;
+
     private List<String> indexedPaths;
     public Semaphore indexLock;
     public Semaphore queryLock;
 
     public TinyGoogleServer() {
-        this.indexingHelperList = new ArrayList<>();
-        this.queryHelperList = new ArrayList<>();
+        this.indexingHelperSocketList = new ArrayList<>();
+        this.indexingHelperInputList = new ArrayList<>();
+        this.indexingHelperOutputList = new ArrayList<>();
+        this.queryHelperSocketList = new ArrayList<>();
+        this.queryHelperInputList = new ArrayList<>();
+        this.queryHelperOutputList = new ArrayList<>();
+
         this.indexedPaths = new ArrayList<>();
         this.indexLock = new Semaphore(1, true);
         this.queryLock = new Semaphore(1, true);
