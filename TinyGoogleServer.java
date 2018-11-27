@@ -1,22 +1,25 @@
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class TinyGoogleServer {
-    private List<IndexingHelper> indexingHelperList;
-    private List<QueryHelper> queryHelperList;
-    private List<String> indexedPaths;
+    public List<IndexingHelper> indexingHelperList;
+    public List<QueryHelper> queryHelperList;
+    public Set<String> indexedPaths;
     public Semaphore indexLock;
     public Semaphore queryLock;
+    public Map<Integer, String> idToDocument;
+    public Map<String, Integer> documentToID;
 
     public TinyGoogleServer() {
         this.indexingHelperList = new ArrayList<>();
         this.queryHelperList = new ArrayList<>();
-        this.indexedPaths = new ArrayList<>();
+        this.indexedPaths = new HashSet<>();
         this.indexLock = new Semaphore(1, true);
         this.queryLock = new Semaphore(1, true);
+        this.idToDocument = new HashMap<>();
+        this.documentToID = new HashMap<>();
     }
 
     public void run(int port) {

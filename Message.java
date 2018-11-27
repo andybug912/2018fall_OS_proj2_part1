@@ -5,6 +5,7 @@ public class Message implements Serializable {
     private String title;
     private String pathToBeIndexed;
     private List<String> keyWords;
+    private String message;
 
     public Message(String title) {
         this.title = title;
@@ -38,5 +39,13 @@ public class Message implements Serializable {
 
     public void setKeyWords(List<String> keyWords) {
         this.keyWords = keyWords;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

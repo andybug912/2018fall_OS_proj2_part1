@@ -20,10 +20,33 @@ public class ServerThread extends Thread {
                 Message message = (Message) input.readObject();
                 if (message.getTitle().equals("INDEX")) {
                     System.out.println("Pending to index");
+                    String path = message.getPathToBeIndexed();
+                    if(this.server.indexedPaths.contains(path)) {   // duplicate indexing request
+                        System.out.println("Fail to index due to the path has already been indexed!");
+                        Message response = new Message("FAIL");
+                        response.setMessage("This path has already been indexed!");
+                        output.writeObject(response);
+                    }
+                    else {
+                        this.server.indexLock.acquire();
+
+                        this.server.indexedPaths.add(path);
+                        IndexingMaster indexingMaster = new IndexingMaster(this.server, this.socket, path);
+                        indexingMaster.run();
+                        indexingMaster.join();
+
+                        this.server.indexLock.release();
+                    }
                 }
                 else if (message.getTitle().equals("QUERY")){
                     System.out.println("Pending to query");
-                    System.out.println(message.getKeyWords());
+                    this.server.queryLock.acquire();
+
+                    QueryMaster queryMaster = new QueryMaster(this.server, this.socket, message.getKeyWords());
+                    queryMaster.run();
+                    queryMaster.join();
+
+                    this.server.queryLock.release();
                 }
                 else if (message.getTitle().equals("DISCONNECT")) {
                     System.out.println("Disconnect from client");
