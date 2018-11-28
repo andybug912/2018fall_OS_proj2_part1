@@ -18,24 +18,25 @@ public class ServerThread extends Thread {
 
             while(true) {
                 Message message = (Message) input.readObject();
+                Message response;
                 if (message.getTitle().equals("INDEX")) {
                     System.out.println("Pending to index");
                     String path = message.getPathToBeIndexed();
                     if(this.server.indexedPaths.contains(path)) {   // duplicate indexing request
                         System.out.println("Fail to index due to the path has already been indexed!");
-                        Message response = new Message("FAIL");
+                        response = new Message("FAIL");
                         response.setMessage("This path has already been indexed!");
                         output.writeObject(response);
                     }
                     else {
                         this.server.indexLock.acquire();
-
                         this.server.indexedPaths.add(path);
-                        IndexingMaster indexingMaster = new IndexingMaster(this.server, this.socket, path);
-                        indexingMaster.run();
-                        indexingMaster.join();
-
+                        IndexingMaster indexingMaster = new IndexingMaster(this.server, path);
+                        String result = indexingMaster.run();
                         this.server.indexLock.release();
+
+                        response = new Message(result.equals("OK") ? "Successfully indexed" : result);
+                        output.writeObject(response);
                     }
                 }
                 else if (message.getTitle().equals("QUERY")){
@@ -57,15 +58,15 @@ public class ServerThread extends Thread {
                     this.server.indexingHelperSocketList.add(socket);
                     this.server.indexingHelperInputList.add(input);
                     this.server.indexingHelperOutputList.add(output);
-                    Message reply = new Message("CONNECTED");
-                    output.writeObject(reply);
+//                    Message reply = new Message("CONNECTED");
+//                    output.writeObject(reply);
                 }
                 else if (message.getTitle().equals("QUERY_HELPER")) {
                     this.server.queryHelperSocketList.add(socket);
                     this.server.queryHelperInputList.add(input);
                     this.server.queryHelperOutputList.add(output);
-                    Message reply = new Message("CONNECTED");
-                    output.writeObject(reply);
+//                    Message reply = new Message("CONNECTED");
+//                    output.writeObject(reply);
                 }
             }
         }

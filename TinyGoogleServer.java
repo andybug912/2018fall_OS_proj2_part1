@@ -30,6 +30,9 @@ public class TinyGoogleServer {
         this.queryLock = new Semaphore(1, true);
         this.idToDocument = new HashMap<>();
         this.documentToID = new HashMap<>();
+
+        // initialize master inverted index files
+
     }
 
     public void run(int port) {
