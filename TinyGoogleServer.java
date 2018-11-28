@@ -13,27 +13,26 @@ public class TinyGoogleServer {
     public List<Socket> queryHelperSocketList;
     public List<ObjectInputStream> queryHelperInputList;
     public List<ObjectOutputStream> queryHelperOutputList;
-
     final public String file1 = "ab.txt";
     final public String file2 = "cdefg.txt";
     final public String file3 = "hijkl.txt";
     final public String file4 = "mnopq.txt";
     final public String file5 = "t.txt";
     final public String file6 = "rsuvwxyz.txt";
-
-
-    private List<String> indexedPaths;
+    public Set<String> indexedPaths;
     public Semaphore indexLock;
     public Semaphore queryLock;
+    public Map<Integer, String> idToDocument;
+    public Map<String, Integer> documentToID;
 
     public TinyGoogleServer() {
+        this.indexedPaths = new HashSet<>();
         this.indexingHelperSocketList = new ArrayList<>();
         this.indexingHelperInputList = new ArrayList<>();
         this.indexingHelperOutputList = new ArrayList<>();
         this.queryHelperSocketList = new ArrayList<>();
         this.queryHelperInputList = new ArrayList<>();
         this.queryHelperOutputList = new ArrayList<>();
-
         File file = new File(this.file1);
         if(file.exists()){
             file.delete();
@@ -46,10 +45,10 @@ public class TinyGoogleServer {
         catch (Exception e){
             System.out.println(e.getMessage());
         }
-
-        this.indexedPaths = new ArrayList<>();
         this.indexLock = new Semaphore(1, true);
         this.queryLock = new Semaphore(1, true);
+        this.idToDocument = new HashMap<>();
+        this.documentToID = new HashMap<>();
     }
 
     public void run(int port) {
