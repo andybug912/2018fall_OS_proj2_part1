@@ -1,9 +1,9 @@
+import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class TinyGoogleServer {
@@ -13,6 +13,14 @@ public class TinyGoogleServer {
     public List<Socket> queryHelperSocketList;
     public List<ObjectInputStream> queryHelperInputList;
     public List<ObjectOutputStream> queryHelperOutputList;
+
+    final public String file1 = "ab.txt";
+    final public String file2 = "cdefg.txt";
+    final public String file3 = "hijkl.txt";
+    final public String file4 = "mnopq.txt";
+    final public String file5 = "t.txt";
+    final public String file6 = "rsuvwxyz.txt";
+
 
     private List<String> indexedPaths;
     public Semaphore indexLock;
@@ -25,6 +33,19 @@ public class TinyGoogleServer {
         this.queryHelperSocketList = new ArrayList<>();
         this.queryHelperInputList = new ArrayList<>();
         this.queryHelperOutputList = new ArrayList<>();
+
+        File file = new File(this.file1);
+        if(file.exists()){
+            file.delete();
+        }
+        try {
+            file.createNewFile();
+            Map<String, PriorityQueue<Item>> a = new HashMap<>();
+
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
 
         this.indexedPaths = new ArrayList<>();
         this.indexLock = new Semaphore(1, true);
