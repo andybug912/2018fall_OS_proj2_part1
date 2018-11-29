@@ -25,7 +25,6 @@ public class IndexingMaster {
 
             // TODO: ZHIBEN ZHU, send file chunks to helpers
 
-
             // send file chunks to helpers
             int numOfHelpers = outputs.size(), numOfFiles = filesInChunks.size();
             int helperIndex = 0, fileRangeStart = 0;
