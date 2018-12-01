@@ -1,5 +1,6 @@
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class IndexingHelper {
     private int maxNumOfMappers;
@@ -40,7 +41,12 @@ public class IndexingHelper {
 
     public static void main(String[] args){
         IndexingHelper ih;
-        if (args.length == 1) {
+        if (args.length == 0) {
+            System.out.println("input your index: ");
+            Scanner scanner = new Scanner(System.in);
+            ih = new IndexingHelper(Integer.parseInt(scanner.nextLine()));
+        }
+        else if (args.length == 1) {
             ih = new IndexingHelper(Integer.parseInt(args[0]));
         }
         else if (args.length > 1 ) {

@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TinyGoogleClient {
-//    private Socket socket;
-//    private ObjectOutputStream output;
-//    private ObjectInputStream input;
     private String serverIP;
     private int serverPort;
 
