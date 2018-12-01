@@ -22,6 +22,9 @@ public class IndexingMaster {
             List<ObjectOutputStream> outputs = this.server.indexingHelperOutputList;
             List<ObjectInputStream> inputs = this.server.indexingHelperInputList;
 
+            if (path.charAt(path.length() - 1) == '/') {
+                path = path.substring(0, path.length() - 1);
+            }
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles == null || listOfFiles.length == 0) {
@@ -58,7 +61,13 @@ public class IndexingMaster {
 //                mergeResult(partialResult);
 //            }
 
-
+            folder = new File(path);
+            listOfFiles = folder.listFiles();
+            for (File chunk: listOfFiles) {
+                if (chunk.getName().contains(".chunk")) {
+                    chunk.delete();
+                }
+            }
             return "OK";
         }
         catch (Exception e) {
@@ -71,10 +80,6 @@ public class IndexingMaster {
     private List<File> splitFilesIntoChunks(File[] files) {
         List<File> fileChunks = new ArrayList<>();
         try {
-            String tempDir = this.path + "/_temp/";
-            System.out.println(tempDir);
-            File temp = new File(tempDir);
-            temp.mkdir();
             for (File file: files) {
                 List<File> tempList = splitFile(file, IndexingMaster.maxRowOfChunk);
                 fileChunks.addAll(tempList);
@@ -97,7 +102,7 @@ public class IndexingMaster {
         for(int start=0, pos=0, end=bb.remaining(), i=1, lineNum=1; pos<end; lineNum++) {
             while(pos<end && bb.get(pos++)!='\n');
             if(lineNum < maxRows && pos<end) continue;
-            Path splitFile = Paths.get(this.path + "/_temp/" + bigFile.getName() + ".chunk" + i++);
+            Path splitFile = Paths.get(this.path + "/" + bigFile.getName() + ".chunk" + i++);
             System.out.println(splitFile.toFile().getName());
             try(FileChannel out = FileChannel.open(splitFile, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
                 bb.position(start).limit(pos);
