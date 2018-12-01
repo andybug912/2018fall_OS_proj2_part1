@@ -8,9 +8,12 @@ public class IndexingHelper {
     private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private int maxNumOfMappers = 3;
 
-    public IndexingHelper(){
+    public IndexingHelper() {}
 
+    public IndexingHelper(int maxNumOfMappers) {
+        this.maxNumOfMappers = maxNumOfMappers;
     }
 
     public void start(){
@@ -24,8 +27,9 @@ public class IndexingHelper {
 
             while (true) {
                 IndexOrder task = (IndexOrder) input.readObject();
-                Map<String, List<InvertedIndexItem>> map = genInvertedIndex(task);
-                output.writeObject(map);
+//                Map<String, InvertedIndexItem> map = genInvertedIndex(task);
+//                output.writeObject(map);
+//                HelperThread ht1 = new HelperThread();
             }
         }
         catch (Exception e){
@@ -33,32 +37,42 @@ public class IndexingHelper {
             e.printStackTrace(System.err);
             return;
         }
-//
-//        try {
-//            System.out.println("Please Enter if you want to disconnect");
-//            Scanner scanner = new Scanner(System.in);
-//            scanner.nextLine();
-//            output.writeObject(new Message("DISCONNECT"));
-//        }
-//        catch (Exception e) {
-//
-//        }
     }
 
-    private Map<String, List<InvertedIndexItem>> genInvertedIndex(IndexOrder task) {
-        Map<String, List<InvertedIndexItem>> map = new HashMap<>();
-        Iterator<Integer> iterator = task.fileIDs.iterator();
-        for (File file: task.files) {
+    public static void main(String[] args){
+        IndexingHelper ih;
+        if (args.length == 1) {
+            ih = new IndexingHelper(Integer.parseInt(args[0]));
+        }
+//        else if (args.length > 1 ) {
+//
+//        }
+        else{
+            ih = new IndexingHelper();
+        }
+        ih.start();
+    }
+}
+
+class HelperThread extends Thread {
+    private List<Integer> fileIDs;
+    private List<File> chunks;
+
+    public HelperThread(List<Integer> fileIDs, List<File> chunks) {
+        this.fileIDs = fileIDs;
+        this.chunks = chunks;
+    }
+    public void run() {
+
+    }
+
+    private Map<String, InvertedIndexItem> genInvertedIndex() {
+        Map<String, InvertedIndexItem> map = new HashMap<>();
+        Iterator<Integer> iterator = fileIDs.iterator();
+        for (File chunk: chunks) {
             int fileID = iterator.next();
             // TODO:
         }
         return map;
-    }
-
-//    private void wordCount
-
-    public static void main(String[] args){
-        IndexingHelper ih = new IndexingHelper();
-        ih.start();
     }
 }

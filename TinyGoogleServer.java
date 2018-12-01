@@ -5,15 +5,13 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class TinyGoogleServer {
-    public List<Socket> indexingHelperSocketList;
-    public List<ObjectInputStream> indexingHelperInputList;
-    public List<ObjectOutputStream> indexingHelperOutputList;
-    public List<Socket> queryHelperSocketList;
-    public List<ObjectInputStream> queryHelperInputList;
-    public List<ObjectOutputStream> queryHelperOutputList;
-    final public String masterIndexPath= "MasterIndex/";
-    private String[] filelist = {masterIndexPath+"ab.txt",masterIndexPath+"cdefg.txt",masterIndexPath+"hijkl.txt",masterIndexPath+"mnopq.txt",masterIndexPath+"t.txt",masterIndexPath+"rsuvwxyz.txt"};
-    private int[] mapNumber = {2,5,5,5,1,8};
+//    public List<Socket> indexingHelperSocketList;
+//    public List<ObjectInputStream> indexingHelperInputList;
+//    public List<ObjectOutputStream> indexingHelperOutputList;
+//    public List<Socket> queryHelperSocketList;
+//    public List<ObjectInputStream> queryHelperInputList;
+//    public List<ObjectOutputStream> queryHelperOutputList;
+
     public Set<String> indexedPaths;
     public Semaphore indexLock;
     public Semaphore queryLock;
@@ -22,29 +20,29 @@ public class TinyGoogleServer {
 
     public TinyGoogleServer() {
         this.indexedPaths = new HashSet<>();
-        this.indexingHelperSocketList = new ArrayList<>();
-        this.indexingHelperInputList = new ArrayList<>();
-        this.indexingHelperOutputList = new ArrayList<>();
-        this.queryHelperSocketList = new ArrayList<>();
-        this.queryHelperInputList = new ArrayList<>();
-        this.queryHelperOutputList = new ArrayList<>();
+//        this.indexingHelperSocketList = new ArrayList<>();
+//        this.indexingHelperInputList = new ArrayList<>();
+//        this.indexingHelperOutputList = new ArrayList<>();
+//        this.queryHelperSocketList = new ArrayList<>();
+//        this.queryHelperInputList = new ArrayList<>();
+//        this.queryHelperOutputList = new ArrayList<>();
 
-        //put map into file
-        File a = new File(masterIndexPath);
+        // put map into file
+        File a = new File(MasterIndexUtil.masterIndexPath);
         if(!a.exists()){
             a.mkdir();
         }
         for(int i=0;i<=5;i++){
-            File file = new File(this.filelist[i]);
+            File file = new File(MasterIndexUtil.filelist[i]);
             if(file.exists()){
                 continue;
             }
             try {
                 file.createNewFile();
-                int mapnumber = mapNumber[i];
-                for(int k=0;k<=mapnumber-1;k++){
+                int mapNumber = MasterIndexUtil.mapNumber[i];
+                for(int k=0;k<=mapNumber-1;k++){
                     Map<String, PriorityQueue<InvertedIndexItem>> map = new HashMap<>();
-                    FileOutputStream outputStream = new FileOutputStream(this.filelist[i]);
+                    FileOutputStream outputStream = new FileOutputStream(MasterIndexUtil.filelist[i]);
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
                     objectOutputStream.writeObject(map);
                     outputStream.close();
@@ -59,9 +57,6 @@ public class TinyGoogleServer {
         this.queryLock = new Semaphore(1, true);
         this.idToDocument = new HashMap<>();
         this.documentToID = new HashMap<>();
-
-        // initialize master inverted index files
-
     }
 
     public void run(int port) {
@@ -94,6 +89,20 @@ public class TinyGoogleServer {
 
     public static void main(String[] args) {
         TinyGoogleServer server = new TinyGoogleServer();
-        server.run(1234);
+        if (args.length == 0) {
+            server.run(1234);
+        }
+        else if (args.length == 1){
+            try {
+                server.run(Integer.parseInt(args[0]));
+            }
+            catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+            }
+        }
+        else {
+            System.out.println("Wrong input arguments!");
+        }
     }
 }
