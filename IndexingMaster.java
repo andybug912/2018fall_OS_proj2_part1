@@ -28,7 +28,37 @@ public class IndexingMaster {
             List<File> filesInChunks = splitFilesIntoChunks(listOfFiles);
 
             // TODO: ZHIBEN ZHU, send file chunks to helpers
+            List<File> tempFilesInChunks = new ArrayList<>(Arrays.asList(new File[filesInChunks.size()]));
+            Collections.copy(tempFilesInChunks,filesInChunks);
 
+            // send file chunks to helpers
+            int numOfHelpers = outputs.size(), numOfFiles = filesInChunks.size();
+            int helperIndex = 0, fileRangeStart = 0;
+            int quotient = numOfFiles / numOfHelpers, remainder = numOfFiles % numOfHelpers;
+
+            while (fileRangeStart < numOfFiles) {
+                int fileRangeEnd = helperIndex < remainder ? fileRangeStart + quotient : fileRangeStart + quotient - 1;
+                List<Integer> fileIDs = new ArrayList<>();
+                for (int i = fileRangeStart; i <= fileRangeEnd; i++) {
+                    int fileID = this.server.idToDocument.size();
+                    if(!this.server.documentToID.containsKey(
+                            tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7)
+                    )
+                    ){
+                        fileIDs.add(fileID);
+                        this.server.documentToID.put(tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7),fileID);
+                        this.server.idToDocument.put(fileID, tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7));
+                    }
+                    else{
+                        fileID = this.server.documentToID.get(tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7));
+                        fileIDs.add(fileID);
+                    }
+                }
+//              outputs.get(helperIndex++).writeObject(
+//                  new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1))
+//    );
+                fileRangeStart = fileRangeEnd + 1;
+            }
 
             // send file chunks to helpers
 //            int numOfHelpers = outputs.size(), numOfFiles = filesInChunks.size();
@@ -49,7 +79,10 @@ public class IndexingMaster {
 //                fileRangeStart = fileRangeEnd + 1;
 //            }
 //
-//            // receive results from helpers
+//
+
+
+//              receive results from helpers
 //            for (int i = 0; i < helperIndex; i++) {
 //                // TODO: receive result from helpers and update master index
 //                Map<String, List<InvertedIndexItem>> partialResult = (Map<String, List<InvertedIndexItem>>) inputs.get(i).readObject();
