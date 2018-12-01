@@ -9,22 +9,17 @@ import java.util.*;
 public class IndexingMaster {
     private TinyGoogleServer server;
     private String path;
-    private static int fileChunkSize = 1024 * 1024; // file chunk size in byte
-    private static int maxRowOfChunk = 20000;   // file chunk size in row
 
     public IndexingMaster(TinyGoogleServer server, String pathTOBeIndexed) {
         this.server = server;
+        if (pathTOBeIndexed.charAt(pathTOBeIndexed.length() - 1) == '/') {
+            pathTOBeIndexed = pathTOBeIndexed.substring(0, pathTOBeIndexed.length() - 1);
+        }
         this.path = pathTOBeIndexed;
     }
 
     public String run() {
         try {
-            List<ObjectOutputStream> outputs = this.server.indexingHelperOutputList;
-            List<ObjectInputStream> inputs = this.server.indexingHelperInputList;
-
-            if (path.charAt(path.length() - 1) == '/') {
-                path = path.substring(0, path.length() - 1);
-            }
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles == null || listOfFiles.length == 0) {
@@ -81,7 +76,7 @@ public class IndexingMaster {
         List<File> fileChunks = new ArrayList<>();
         try {
             for (File file: files) {
-                List<File> tempList = splitFile(file, IndexingMaster.maxRowOfChunk);
+                List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
                 fileChunks.addAll(tempList);
             }
         }
