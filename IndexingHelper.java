@@ -1,9 +1,13 @@
+import java.io.File;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class IndexingHelper {
     private int maxNumOfMappers;
     private int port;
+    final public String serverInfoFile = "server_list.txt";
 
     public IndexingHelper(int helperID) {
         this.maxNumOfMappers = MasterIndexUtil.defaultMaxNumOfMappers;
@@ -14,6 +18,21 @@ public class IndexingHelper {
     }
 
     public void start(){
+        File sfile = new File(this.serverInfoFile);
+        Scanner fileScanner;
+        try{
+            fileScanner = new Scanner(sfile);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }
+        int i = 0;
+        while(fileScanner.hasNext() && i< this.){
+            String[] serverInfo = fileScanner.nextLine().split(" ");
+        }
+        fileScanner.close();
+
         ServerSocket serverSocket;
         try{
             serverSocket = new ServerSocket(this.port);
@@ -53,26 +72,3 @@ public class IndexingHelper {
         ih.start();
     }
 }
-//
-//class HelperThread extends Thread {
-//    private List<Integer> fileIDs;
-//    private List<File> chunks;
-//
-//    public HelperThread(List<Integer> fileIDs, List<File> chunks) {
-//        this.fileIDs = fileIDs;
-//        this.chunks = chunks;
-//    }
-//    public void run() {
-//
-//    }
-//
-//    private Map<String, InvertedIndexItem> genInvertedIndex() {
-//        Map<String, InvertedIndexItem> map = new HashMap<>();
-//        Iterator<Integer> iterator = fileIDs.iterator();
-//        for (File chunk: chunks) {
-//            int fileID = iterator.next();
-//            // TODO:
-//        }
-//        return map;
-//    }
-//}
