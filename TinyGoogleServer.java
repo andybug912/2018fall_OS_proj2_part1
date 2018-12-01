@@ -5,27 +5,32 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class TinyGoogleServer {
-//    public List<Socket> indexingHelperSocketList;
-//    public List<ObjectInputStream> indexingHelperInputList;
-//    public List<ObjectOutputStream> indexingHelperOutputList;
-//    public List<Socket> queryHelperSocketList;
-//    public List<ObjectInputStream> queryHelperInputList;
-//    public List<ObjectOutputStream> queryHelperOutputList;
 
     public Set<String> indexedPaths;
     public Semaphore indexLock;
     public Semaphore queryLock;
     public Map<Integer, String> idToDocument;
     public Map<String, Integer> documentToID;
+    final public String serverInfoFile = "server_list.txt";
 
     public TinyGoogleServer() {
+        File sfile = new File(this.serverInfoFile);
+        Scanner fileScanner;
+        try{
+            fileScanner = new Scanner(sfile);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }
+        ArrayList<String[]> workerServerInfo = new ArrayList<>();
+        while(fileScanner.hasNext()){
+            String[] serverInfo = fileScanner.nextLine().split(" ");
+            workerServerInfo.add(serverInfo);
+        }
+        fileScanner.close();
+
         this.indexedPaths = new HashSet<>();
-//        this.indexingHelperSocketList = new ArrayList<>();
-//        this.indexingHelperInputList = new ArrayList<>();
-//        this.indexingHelperOutputList = new ArrayList<>();
-//        this.queryHelperSocketList = new ArrayList<>();
-//        this.queryHelperInputList = new ArrayList<>();
-//        this.queryHelperOutputList = new ArrayList<>();
 
         // put map into file
         File a = new File(MasterIndexUtil.masterIndexPath);
