@@ -46,7 +46,6 @@ public class IndexingMaster {
                     inputList.add(input);
             }
 
-
             while (fileRangeStart < numOfFiles) {
                 int fileRangeEnd = helperIndex < remainder ? fileRangeStart + quotient : fileRangeStart + quotient - 1;
                 List<Integer> fileIDs = new ArrayList<>();
@@ -66,7 +65,7 @@ public class IndexingMaster {
                     }
                 }
                 outputList.get(helperIndex++).writeObject(
-                  new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1))
+                  new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1), this.server.reducerInfo)
                 );
                 fileRangeStart = fileRangeEnd + 1;
             }
