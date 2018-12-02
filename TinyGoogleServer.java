@@ -11,33 +11,32 @@ public class TinyGoogleServer {
     public Semaphore queryLock;
     public Map<Integer, String> idToDocument;
     public Map<String, Integer> documentToID;
-    final public String serverInfoFile = "server_list.txt";
+    public ArrayList<String[]> reducerInfo;
 
     public TinyGoogleServer() {
-        File sfile = new File(this.serverInfoFile);
+        // read helper info, ip & port
+        File helperInfoFile = new File(MasterIndexUtil.helperInfoFileName);
         Scanner fileScanner;
         try{
-            fileScanner = new Scanner(sfile);
+            fileScanner = new Scanner(helperInfoFile);
         }
         catch (Exception e){
             System.out.println(e.getMessage());
             return;
         }
-        ArrayList<String[]> workerServerInfo = new ArrayList<>();
+        ArrayList<String[]> helperInfo = new ArrayList<>();
         while(fileScanner.hasNext()){
             String[] serverInfo = fileScanner.nextLine().split(" ");
-            workerServerInfo.add(serverInfo);
+            helperInfo.add(serverInfo);
         }
         fileScanner.close();
 
-        this.indexedPaths = new HashSet<>();
-
-        // put map into file
+        // put map into master index file
         File a = new File(MasterIndexUtil.masterIndexPath);
         if(!a.exists()){
             a.mkdir();
         }
-        for(int i=0;i<=5;i++){
+        for(int i = 0; i < MasterIndexUtil.filelist.length; i++){
             File file = new File(MasterIndexUtil.filelist[i]);
             if(file.exists()){
                 continue;
@@ -62,6 +61,7 @@ public class TinyGoogleServer {
         this.queryLock = new Semaphore(1, true);
         this.idToDocument = new HashMap<>();
         this.documentToID = new HashMap<>();
+        this.indexedPaths = new HashSet<>();
     }
 
     public void run(int port) {

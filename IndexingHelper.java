@@ -7,7 +7,6 @@ public class IndexingHelper {
     private int maxNumOfMappers;
     private int port;
     private int helperID;
-    final public String serverInfoFile = "server_list.txt";
 
     public IndexingHelper(int helperID) {
         this.helperID = helperID;
@@ -20,10 +19,11 @@ public class IndexingHelper {
     }
 
     public void start(){
-        File sfile = new File(this.serverInfoFile);
+        // get helper IP
+        File helperInfoFile = new File(MasterIndexUtil.helperInfoFileName);
         Scanner fileScanner;
         try{
-            fileScanner = new Scanner(sfile);
+            fileScanner = new Scanner(helperInfoFile);
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -31,9 +31,9 @@ public class IndexingHelper {
         }
         int i = 0;
         while(fileScanner.hasNext()){
-            String[] serverInfo = fileScanner.nextLine().split(" ");
+            String[] helperInfo = fileScanner.nextLine().split(" ");
             if(i++ == this.helperID){
-                this.port = Integer.parseInt(serverInfo[1]);
+                this.port = Integer.parseInt(helperInfo[1]);
                 break;
             }
         }

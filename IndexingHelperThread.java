@@ -16,6 +16,13 @@ public class IndexingHelperThread extends Thread {
 
             while (true) {
                 // TODO: run mapper or reducer thread
+                IndexOrder order = (IndexOrder) input.readObject();
+                if (order.typeOfOrder == MasterIndexUtil.MAPPER) {
+
+                }
+                else if (order.typeOfOrder == MasterIndexUtil.REDUCER) {
+
+                }
             }
         }
         catch (Exception e) {
