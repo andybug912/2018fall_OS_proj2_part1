@@ -3,9 +3,9 @@ import java.util.List;
 
 public class IndexOrder {
     public List<Integer> fileIDs;
-    public File[] files;
+    public List<File> files;//改
 
-    public IndexOrder(List<Integer> fileIDs, File[] files) {
+    public IndexOrder(List<Integer> fileIDs, List<File> files) {
         this.fileIDs = fileIDs;
         this.files = files;
     }

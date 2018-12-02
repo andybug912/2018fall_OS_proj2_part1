@@ -51,11 +51,14 @@ public class IndexingHelper {
         for (File file: task.files) {
             int fileID = iterator.next();
             // TODO:
+
         }
         return map;
     }
 
-//    private void wordCount
+    private void wordCount(){
+
+    }
 
     public static void main(String[] args){
         IndexingHelper ih = new IndexingHelper();
