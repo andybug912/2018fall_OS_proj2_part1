@@ -71,10 +71,22 @@ public class IndexingHelper {
                 ExecutorService executor = Executors.newFixedThreadPool(this.maxNumOfMappers);
                 List<Future<Boolean>> futureList = new ArrayList<>();
 
-//                MapperThread mapperThread = new MapperThread();
-//                Future<Boolean> future = executor.submit(mapperThread);
-//                futureList.add(future);
-//
+                int numOfChunks = order.fileIDs.size();
+                int numOfMappers = numOfChunks <= maxNumOfMappers ? numOfChunks : maxNumOfMappers;
+                int mapperIndex = 0, fileRangeStart = 0;
+                int quotient = numOfChunks / numOfMappers , remainder = numOfChunks % numOfMappers;
+                while(fileRangeStart < numOfChunks){
+                    int fileRangeEnd = mapperIndex < remainder ? fileRangeStart + quotient : fileRangeStart + quotient - 1;
+                    MapperThread mapperThread = new MapperThread(
+                            order.fileIDs.subList(fileRangeStart, fileRangeEnd + 1),
+                            new ArrayList<File>(order.files.subList(fileRangeStart, fileRangeEnd + 1)),
+                            order.reducerInfo);
+                    Future<Boolean> future = executor.submit(mapperThread);
+                    futureList.add(future);
+                    mapperIndex++;
+                    fileRangeStart = fileRangeEnd + 1;
+                }
+
                 for (Future<Boolean> _future: futureList) {
                     if (!_future.get()) {
                         output.writeObject("FAIL");

@@ -1,7 +1,8 @@
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
-public class IndexOrder {
+public class IndexOrder implements Serializable {
     public List<Integer> fileIDs;
     public List<File> files;
     public List<String[]> reducerInfo;
