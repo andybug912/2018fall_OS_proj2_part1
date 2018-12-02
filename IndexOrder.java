@@ -2,19 +2,13 @@ import java.io.File;
 import java.util.List;
 
 public class IndexOrder {
-    public int typeOfOrder;
     public List<Integer> fileIDs;
     public List<File> files;
-    public List<String> masterIndexFiles;
+    public List<String[]> reducerInfo;
 
-    public IndexOrder(List<Integer> fileIDs, List<File> files) {
-        this.typeOfOrder = MasterIndexUtil.MAPPER;
+    public IndexOrder(List<Integer> fileIDs, List<File> files, List<String[]> reducerInfo) {
         this.fileIDs = fileIDs;
         this.files = files;
-    }
-
-    public IndexOrder(List<String> masterIndexFiles) {
-        this.typeOfOrder = MasterIndexUtil.REDUCER;
-        this.masterIndexFiles = masterIndexFiles;
+        this.reducerInfo = reducerInfo;
     }
 }

@@ -27,8 +27,24 @@ public class TinyGoogleServer {
         }
         this.helperInfo = new ArrayList<>();
         while(fileScanner.hasNext()){
-            String[] serverInfo = fileScanner.nextLine().split(" ");
-            this.helperInfo.add(serverInfo);
+            String[] info = fileScanner.nextLine().split(" ");
+            helperInfo.add(info);
+        }
+        fileScanner.close();
+
+        // read reducer info, ip & port
+        File reducerInfoFile = new File(MasterIndexUtil.reducerInfoFileName);
+        try {
+            fileScanner = new Scanner(reducerInfoFile);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }
+        reducerInfo = new ArrayList<>();
+        while(fileScanner.hasNext()){
+            String[] info = fileScanner.nextLine().split(" ");
+            this.reducerInfo.add(Arrays.copyOfRange(info, 0, 3));
         }
         fileScanner.close();
 
