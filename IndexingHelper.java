@@ -1,7 +1,14 @@
 import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class IndexingHelper {
     private int maxNumOfMappers;
@@ -39,6 +46,10 @@ public class IndexingHelper {
         }
         fileScanner.close();
 
+
+
+
+        // ******* wait for incoming connection from server *******
         ServerSocket serverSocket;
         try{
             serverSocket = new ServerSocket(this.port);
@@ -52,8 +63,27 @@ public class IndexingHelper {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();      //listen
-                IndexingHelperThread indexingHelperThread = new IndexingHelperThread(socket);
-                indexingHelperThread.start();
+                final ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                final ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+
+                IndexOrder order = (IndexOrder) input.readObject();
+                // TODO: dispatch order to mappers
+                ExecutorService executor = Executors.newFixedThreadPool(this.maxNumOfMappers);
+                List<Future<Boolean>> futureList = new ArrayList<>();
+
+//                MapperThread mapperThread = new MapperThread();
+//                Future<Boolean> future = executor.submit(mapperThread);
+//                futureList.add(future);
+//
+                for (Future<Boolean> _future: futureList) {
+                    if (!_future.get()) {
+                        output.writeObject("FAIL");
+//                        System.out.println("At least one mapper failed!");
+                        socket.close();
+                        return;
+                    }
+                }
+                output.writeObject("OK");
             }
             catch (Exception e) {
                 System.err.println("222Error in helper: " + e.getMessage());
