@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.Socket;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -9,19 +10,18 @@ import java.util.*;
 public class IndexingMaster {
     private TinyGoogleServer server;
     private String path;
-    private static int fileChunkSize = 1024 * 1024; // file chunk size in byte
-    private static int maxRowOfChunk = 20000;   // file chunk size in row
 
     public IndexingMaster(TinyGoogleServer server, String pathTOBeIndexed) {
         this.server = server;
+        if (pathTOBeIndexed.charAt(pathTOBeIndexed.length() - 1) == '/') {
+            pathTOBeIndexed = pathTOBeIndexed.substring(0, pathTOBeIndexed.length() - 1);
+        }
         this.path = pathTOBeIndexed;
     }
 
     public String run() {
         try {
-            List<ObjectOutputStream> outputs = this.server.indexingHelperOutputList;
-            List<ObjectInputStream> inputs = this.server.indexingHelperInputList;
-
+            // split files into chunks
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
             if (listOfFiles == null || listOfFiles.length == 0) {
@@ -29,15 +29,24 @@ public class IndexingMaster {
             }
             List<File> filesInChunks = splitFilesIntoChunks(listOfFiles);
 
-            // TODO: ZHIBEN ZHU, send file chunks to helpers
+            // send file chunks to helpers
             List<File> tempFilesInChunks = new ArrayList<>(Arrays.asList(new File[filesInChunks.size()]));
             Collections.copy(tempFilesInChunks,filesInChunks);
-
-            // send file chunks to helpers
-            int numOfHelpers = outputs.size(), numOfFiles = filesInChunks.size();
+            int numOfHelpers = this.server.helperInfo.size(), numOfFiles = filesInChunks.size();
             int helperIndex = 0, fileRangeStart = 0;
-//            int quotient = numOfFiles / numOfHelpers, remainder = numOfFiles % numOfHelpers;
-            int quotient = numOfFiles / 4, remainder = numOfFiles % 4;
+            int quotient = numOfFiles / numOfHelpers, remainder = numOfFiles % numOfHelpers;
+
+            List<ObjectOutputStream> outputList = new ArrayList<>();
+            List<ObjectInputStream> inputList = new ArrayList<>();
+            for (String[] info: this.server.helperInfo) {
+                    Socket socket = new Socket(info[0], Integer.parseInt(info[1]));
+                    ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                    outputList.add(output);
+                    ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+                    inputList.add(input);
+            }
+
+
             while (fileRangeStart < numOfFiles) {
                 int fileRangeEnd = helperIndex < remainder ? fileRangeStart + quotient : fileRangeStart + quotient - 1;
                 List<Integer> fileIDs = new ArrayList<>();
@@ -45,7 +54,7 @@ public class IndexingMaster {
                     int fileID = this.server.idToDocument.size();
                     if(!this.server.documentToID.containsKey(
                             tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7)
-                        )
+                    )
                     ){
                         fileIDs.add(fileID);
                         this.server.documentToID.put(tempFilesInChunks.get(i).getCanonicalPath().substring(0,tempFilesInChunks.get(i).getCanonicalPath().length()-7),fileID);
@@ -56,23 +65,27 @@ public class IndexingMaster {
                         fileIDs.add(fileID);
                     }
                 }
-                System.out.println(fileIDs);
-                System.out.println(tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1));
-//                outputs.get(helperIndex++).writeObject(
-////                        new IndexOrder(fileIDs, Arrays.copyOfRange(listOfFiles, fileRangeStart, fileRangeEnd))
-//                        new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1))
-//                );
+                outputList.get(helperIndex++).writeObject(
+                  new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1))
+                );
                 fileRangeStart = fileRangeEnd + 1;
             }
-//
-//            // receive results from helpers
-//            for (int i = 0; i < helperIndex; i++) {
-//                // TODO: receive result from helpers and update master index
-//                Map<String, List<InvertedIndexItem>> partialResult = (Map<String, List<InvertedIndexItem>>) inputs.get(i).readObject();
-//                mergeResult(partialResult);
-//            }
 
 
+            folder = new File(path);
+            listOfFiles = folder.listFiles();
+            for (File chunk: listOfFiles) {
+                if (chunk.getName().contains(".chunk")) {
+                    chunk.delete();
+                }
+            }
+
+            for(ObjectInputStream inputStream:inputList){
+                String response = (String) inputStream.readObject();
+                if(response.equals("FAIL")){
+                    return "FAIL";
+                }
+            }
             return "OK";
         }
         catch (Exception e) {
@@ -85,12 +98,8 @@ public class IndexingMaster {
     private List<File> splitFilesIntoChunks(File[] files) {
         List<File> fileChunks = new ArrayList<>();
         try {
-//            String tempDir = this.path + "/_temp/";
-//            System.out.println(tempDir);
-//            File temp = new File(tempDir);
-//            temp.mkdir();
             for (File file: files) {
-                List<File> tempList = splitFile(file, IndexingMaster.maxRowOfChunk);
+                List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
                 fileChunks.addAll(tempList);
             }
         }
@@ -124,9 +133,4 @@ public class IndexingMaster {
         }
         return files;
     }
-
-    private void mergeResult(Map<String, List<InvertedIndexItem>> partialResult) {
-
-    }
-
 }

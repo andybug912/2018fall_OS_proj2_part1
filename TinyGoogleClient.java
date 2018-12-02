@@ -6,17 +6,21 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TinyGoogleClient {
-    private Socket socket;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    private String serverIP;
+    private int serverPort;
+
+    public TinyGoogleClient(String ip, int port) {
+        this.serverIP = ip;
+        this.serverPort = port;
+    }
 
     public void start(){
         while (true) {
             try{
                 // connect to server
-                this.socket = new Socket("localhost",1234);
-                this.output = new ObjectOutputStream(socket.getOutputStream());
-                this.input = new ObjectInputStream(socket.getInputStream());
+                Socket socket = new Socket(this.serverIP,this.serverPort);
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
                 // index or query
                 Scanner scanner = new Scanner(System.in);
@@ -37,7 +41,6 @@ public class TinyGoogleClient {
                     List<String> keyWords = new ArrayList<>();
                     while(scanner.hasNextLine()){
                         String s = scanner.nextLine();
-                        //scanner.nextLine();
                         if(!s.equals("#")) {
                             keyWords.add(s);
                         }
@@ -58,7 +61,17 @@ public class TinyGoogleClient {
     }
 
     public static void main(String[] args){
-        TinyGoogleClient client = new TinyGoogleClient();
+        TinyGoogleClient client;
+        if (args.length == 0) {
+            client = new TinyGoogleClient("localhost", 1234);
+        }
+        else if (args.length == 2) {
+            client = new TinyGoogleClient(args[0], Integer.parseInt(args[1]));
+        }
+        else {
+            System.out.println("Wrong arguments!");
+            return;
+        }
         client.start();
     }
 }
