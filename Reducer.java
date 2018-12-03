@@ -4,11 +4,15 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 public class Reducer {
     private int port;
-    private Set<String> myMasterIndexFiles;
+    public Set<String> myMasterIndexFiles;
     private String validFirstLetters;
+    public int firstFileMapNumber;
+    public int secondFileMapNumber;
+    public Semaphore indexLock;
 
     public Reducer(int reducerID) {
         myMasterIndexFiles = new HashSet<>();
@@ -31,10 +35,14 @@ public class Reducer {
                 this.validFirstLetters = reducerInfo[2];
                 this.myMasterIndexFiles.add(MasterIndexUtil.filelist[Integer.parseInt(reducerInfo[3])]);
                 this.myMasterIndexFiles.add(MasterIndexUtil.filelist[Integer.parseInt(reducerInfo[4])]);
+                this.firstFileMapNumber = MasterIndexUtil.mapNumber[Integer.parseInt(reducerInfo[3])];
+                this.secondFileMapNumber = MasterIndexUtil.mapNumber[Integer.parseInt(reducerInfo[4])];
                 break;
             }
         }
         fileScanner.close();
+
+        this.indexLock = new Semaphore(1, true);
     }
 
     public void run() {

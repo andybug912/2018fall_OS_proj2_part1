@@ -61,8 +61,11 @@ public class TinyGoogleServer {
             try {
                 file.createNewFile();
                 int mapNumber = MasterIndexUtil.mapNumber[i];
+                String filename = MasterIndexUtil.filelist[i].substring(13,MasterIndexUtil.filelist[i].length()-4);
+                System.out.println(filename);
                 for(int k=0;k<=mapNumber-1;k++){
-                    Map<String, PriorityQueue<InvertedIndexItem>> map = new HashMap<>();
+                    LinkedHashMap<Character,Map<String, PriorityQueue<InvertedIndexItem>>> map = new LinkedHashMap<>();
+//                    Map<String, PriorityQueue<InvertedIndexItem>> map = new HashMap<>();
                     FileOutputStream outputStream = new FileOutputStream(MasterIndexUtil.filelist[i]);
                     ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
                     objectOutputStream.writeObject(map);
