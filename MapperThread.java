@@ -46,7 +46,7 @@ public class MapperThread implements Callable<Boolean> {
                     validFirstLetter.add(c);
                 }
                 int endMapIndex = startMapIndex;
-                Map<Character, Map<String, List<InvertedIndexItem>>> mapToSend = new LinkedHashMap<>();
+                Map<Character, Map<String, List<InvertedIndexItem>>> mapToSend = new HashMap<>();
                 for (; endMapIndex < this.invertedIndexArray.length; endMapIndex++) {
                     if (!validFirstLetter.contains((char) ('a' + endMapIndex))) {
                         startMapIndex = endMapIndex;
