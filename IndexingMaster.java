@@ -65,7 +65,7 @@ public class IndexingMaster {
                     }
                 }
                 outputList.get(helperIndex++).writeObject(
-                  new IndexOrder(fileIDs, tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1), this.server.reducerInfo)
+                    new IndexOrder(fileIDs, new ArrayList<File>(tempFilesInChunks.subList(fileRangeStart, fileRangeEnd + 1)), this.server.reducerInfo)
                 );
                 fileRangeStart = fileRangeEnd + 1;
             }
