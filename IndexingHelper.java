@@ -46,9 +46,6 @@ public class IndexingHelper {
         }
         fileScanner.close();
 
-
-
-
         // ******* wait for incoming connection from server *******
         ServerSocket serverSocket;
         try{
@@ -90,7 +87,7 @@ public class IndexingHelper {
                 for (Future<Boolean> _future: futureList) {
                     if (!_future.get()) {
                         output.writeObject("FAIL");
-//                        System.out.println("At least one mapper failed!");
+                        System.out.println("At least one mapper failed!");
                         socket.close();
                         return;
                     }
@@ -112,10 +109,10 @@ public class IndexingHelper {
             Scanner scanner = new Scanner(System.in);
             ih = new IndexingHelper(Integer.parseInt(scanner.nextLine()));
         }
-        else if (args.length == 1) {
+        else if (args.length == 1) {    // helper ID
             ih = new IndexingHelper(Integer.parseInt(args[0]));
         }
-        else if (args.length > 1 ) {
+        else if (args.length == 2 ) {   // helper ID & max mapper number
             ih = new IndexingHelper(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
         }
         else{
