@@ -70,27 +70,30 @@ public class IndexingMaster {
                 fileRangeStart = fileRangeEnd + 1;
             }
 
-
-            folder = new File(path);
-            listOfFiles = folder.listFiles();
-            for (File chunk: listOfFiles) {
-                if (chunk.getName().contains(".chunk")) {
-                    chunk.delete();
-                }
-            }
-
             for(ObjectInputStream inputStream:inputList){
                 String response = (String) inputStream.readObject();
                 if(response.equals("FAIL")){
+                    deleteTempChunks();
                     return "FAIL";
                 }
             }
+            deleteTempChunks();
             return "OK";
         }
         catch (Exception e) {
             System.err.println("111Error: " + e.getMessage());
             e.printStackTrace(System.err);
             return "Error occurred when trying to do indexing";
+        }
+    }
+
+    private void deleteTempChunks() {
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
+        for (File chunk: listOfFiles) {
+            if (chunk.getName().contains(".chunk")) {
+                chunk.delete();
+            }
         }
     }
 
