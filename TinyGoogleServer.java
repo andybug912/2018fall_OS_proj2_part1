@@ -87,6 +87,7 @@ public class TinyGoogleServer {
         try
         {
             serverSock = new ServerSocket(port);
+            System.out.println("***** Tiny Google Server Is Up *****");
         }
         catch(Exception e) {
             System.err.println("Error: " + e.getMessage());
