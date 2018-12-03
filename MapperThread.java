@@ -29,7 +29,7 @@ public class MapperThread implements Callable<Boolean> {
                 Map<String, Integer> wordCount = genWordCount(files.get(i));
                 genInvertedIndex(wordCount, fileIDs.get(i));
             }
-//            sendPartialResultToReducer();
+            // send partial inverted index to reducer
             int startMapIndex = 0;
             List<ObjectInputStream> inputs = new ArrayList<>();
             for (String[] info: this.reducerInfo) {
@@ -46,11 +46,13 @@ public class MapperThread implements Callable<Boolean> {
                     validFirstLetter.add(c);
                 }
                 int endMapIndex = startMapIndex;
+                Map<Character, Map<String, List<InvertedIndexItem>>> mapToSend = new LinkedHashMap<>();
                 for (; endMapIndex < this.invertedIndexArray.length; endMapIndex++) {
                     if (!validFirstLetter.contains((char) ('a' + endMapIndex))) {
                         startMapIndex = endMapIndex;
                         break;
                     }
+                    mapToSend.put((char) ('a' + endMapIndex), this.invertedIndexArray[endMapIndex]);
                 }
                 output.writeObject(Arrays.copyOfRange(this.invertedIndexArray, startMapIndex, endMapIndex));
             }
