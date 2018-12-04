@@ -54,7 +54,7 @@ public class MapperThread implements Callable<Boolean> {
                     }
                     mapToSend.put((char) ('a' + endMapIndex), this.invertedIndexArray[endMapIndex]);
                 }
-                output.writeObject(Arrays.copyOfRange(this.invertedIndexArray, startMapIndex, endMapIndex));
+                output.writeObject(mapToSend);
             }
 
             for (ObjectInputStream input: inputs) {
