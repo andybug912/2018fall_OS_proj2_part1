@@ -40,14 +40,25 @@ public class ServerThread extends Thread {
                     }
                 }
                 else if (message.getTitle().equals("QUERY")){
+                    if (this.server.indexedPaths.size() == 0) {
+//                        System.out.println("No path is already indexed, cannot do querying!");
+                        response = new Message("No path is already indexed, cannot do querying!");
+                        output.writeObject(response);
+                        continue;
+                    }
                     System.out.println("Pending to query");
                     this.server.queryLock.acquire();
+                    while (!this.server.indexLock.tryAcquire()) {
+                        Thread.sleep(60 * 1000);
+                    }
 
-                    QueryMaster queryMaster = new QueryMaster(this.server, this.socket, message.getKeyWords());
-                    queryMaster.run();
-                    queryMaster.join();
+                    QueryMaster queryMaster = new QueryMaster(this.server, message.getKeyWords());
+                    String result = queryMaster.run();
 
                     this.server.queryLock.release();
+
+                    response = new Message(result);
+                    output.writeObject(response);
                 }
                 else if (message.getTitle().equals("DISCONNECT")) {
                     System.out.println("Disconnect from client");
