@@ -56,12 +56,34 @@ public class TinyGoogleServer {
         for(int i = 0; i < MasterIndexUtil.filelist.length; i++){
             File file = new File(MasterIndexUtil.filelist[i]);
             if(file.exists()){
+//                //test
+//                try {
+//                    FileInputStream freader = new FileInputStream(MasterIndexUtil.filelist[i]);
+//                    ObjectInputStream objectInputStream = new ObjectInputStream(freader);
+//                    HashMap<Character, Map<String, PriorityQueue<InvertedIndexItem>>> map1 = (HashMap<Character, Map<String, PriorityQueue<InvertedIndexItem>>>) objectInputStream.readObject();
+//
+//                    Iterator it2 = map1.get('a').entrySet().iterator();
+//                    while (it2.hasNext()) {
+//                        Map.Entry pair = (Map.Entry) it2.next();
+//                        String word = (String) pair.getKey();
+//                        PriorityQueue<InvertedIndexItem> pq = (PriorityQueue<InvertedIndexItem>) pair.getValue();
+//                        System.out.println(word + "\n");
+//                        Iterator test = pq.iterator();
+//                        while(test.hasNext()){
+//                            InvertedIndexItem item = (InvertedIndexItem) test.next();
+//                            System.out.println(item.fileID + "\t" + item.count + "\n");
+//                        }
+//                    }
+//                }
+//                catch (Exception e){
+//                    System.out.println(e.getMessage());
+//                }
                 continue;
             }
             try {
                 file.createNewFile();
                 int mapNumber = MasterIndexUtil.mapNumber[i];
-                String filename = MasterIndexUtil.filelist[i].substring(13,MasterIndexUtil.filelist[i].length()-4);
+                String filename = MasterIndexUtil.filelist[i].substring(12,MasterIndexUtil.filelist[i].length()-4);
                 System.out.println(filename);
                 char[] chOfFileName = filename.toCharArray();
                 HashMap<Character,Map<String, PriorityQueue<InvertedIndexItem>>> map = new HashMap<>();
