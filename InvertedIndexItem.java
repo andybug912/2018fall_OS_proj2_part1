@@ -1,4 +1,6 @@
-public class InvertedIndexItem {
+import java.io.Serializable;
+
+public class InvertedIndexItem implements Serializable {
     public int fileID;
     public int count;
 
