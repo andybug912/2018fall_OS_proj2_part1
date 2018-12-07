@@ -104,8 +104,10 @@ public class IndexingMaster {
         List<File> fileChunks = new ArrayList<>();
         try {
             for (File file: files) {
-                List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
-                fileChunks.addAll(tempList);
+                if (!file.isHidden()) {
+                    List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
+                    fileChunks.addAll(tempList);
+                }
             }
         }
         catch (Exception e) {
