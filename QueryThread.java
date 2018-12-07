@@ -15,23 +15,30 @@ public class QueryThread implements Callable<Map<Integer, Integer>> {
     }
 
     @Override
-    public Map<Integer, Integer> call() throws Exception {
+    public Map<Integer, Integer> call() {
         Map<Integer, Integer> result = new HashMap<>();
         for (String keyWord: this.keyWords) {
             char firstLetter = keyWord.charAt(0);
             String fileName = MasterIndexUtil.findMasterIndexFileName(firstLetter);
-            FileInputStream fis = new FileInputStream(fileName);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>> allMaps =
-                    (Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>>) ois.readObject();
-            if (allMaps.get(firstLetter).containsKey(keyWord)) {
-                PriorityQueue<InvertedIndexItem> pq = allMaps.get(firstLetter).get(keyWord);
-                for (InvertedIndexItem item: pq) {
-                    result.put(item.fileID, result.getOrDefault(item.fileID, 0) + item.count);
+            try {
+                FileInputStream fis = new FileInputStream(fileName);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>> allMaps =
+                        (Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>>) ois.readObject();
+                if (allMaps.get(firstLetter).containsKey(keyWord)) {
+                    PriorityQueue<InvertedIndexItem> pq = allMaps.get(firstLetter).get(keyWord);
+                    for (InvertedIndexItem item: pq) {
+                        result.put(item.fileID, result.getOrDefault(item.fileID, 0) + item.count);
+                    }
                 }
+                ois.close();
+                fis.close();
             }
-            ois.close();
-            fis.close();
+            catch (Exception e) {
+                System.err.println("Error in query thread: " + e.getMessage());
+                e.printStackTrace(System.err);
+                return null;
+            }
         }
         return result.isEmpty() ? null : result;
     }

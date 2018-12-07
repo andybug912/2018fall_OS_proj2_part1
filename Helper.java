@@ -101,7 +101,7 @@ public class Helper {
                     List<Future<Map<Integer, Integer>>> futureList = new ArrayList<>();
                     List<String> keyWords = order.queryKeyWords;
 
-                    // TODO: dispatch key words to query threads
+                    // dispatch key words to query threads
                     int numOfWords = keyWords.size();
                     int numOfQueryers = numOfWords <= maxNumOfQueryThreads ? numOfWords : maxNumOfQueryThreads;
                     int queryIndex = 0, wordRangeStart = 0;
@@ -125,7 +125,6 @@ public class Helper {
                             partialResults.add(temp);
                         }
                     }
-//                    List<Map<Integer, Integer>> mergedResult = mergeResult(partialResults);
                     Map<Integer, Integer> mergedResult = mergeResult(partialResults);
                     output.writeObject(mergedResult);
                 }
@@ -138,8 +137,6 @@ public class Helper {
         }
     }
 
-//    private List<Map<Integer, Integer>> mergeResult(List<Map<Integer, Integer>> partialResults) {
-//        List<Map<Integer, Integer>> mergedResult = new ArrayList<>();
     private Map<Integer, Integer> mergeResult(List<Map<Integer, Integer>> partialResults){
         Map<Integer, Integer> mergedResult = new HashMap<>();
         for(Map<Integer, Integer> map: partialResults){

@@ -44,7 +44,7 @@ public class TinyGoogleClient {
                     while(scanner.hasNextLine()){
                         String s = scanner.nextLine();
                         if(!s.equals("#")) {
-                            keyWords.add(s);
+                            keyWords.add(s.toLowerCase());
                         }
                         else{
                             break;

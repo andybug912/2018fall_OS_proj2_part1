@@ -1,6 +1,4 @@
-import java.io.File;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -74,18 +72,18 @@ public class MapperThread implements Callable<Boolean> {
 
     private Map<String, Integer> genWordCount(File file) throws Exception {
         Map<String, Integer> wordCount = new HashMap<>();
-        Scanner fileScanner = new Scanner(file);
-        while(fileScanner.hasNext()){
-            String[] line = fileScanner.nextLine().split(" ");
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String originLine;
+        while ((originLine = br.readLine()) != null) {
+            String[] line = originLine.toLowerCase().split(" ");
             for (String wordWithPunctuation: line) {
-                String word = wordWithPunctuation.toLowerCase().replaceAll("\\W", " ").trim();
+                String word = wordWithPunctuation.replaceAll("[!@#$%^&*()-=+,.?<>\'\"]", " ").trim();
+                if (word.contains("anna")) System.out.println(word + " " + file.getName() + ": ");
                 if (word.equals("") || word.charAt(0) < 'a' || word.charAt(0) > 'z') continue;
-                if (word.equals("anna")) System.out.println(word);
                 wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
             }
         }
-        fileScanner.close();
-
+        br.close();
         return wordCount;
     }
 
@@ -117,6 +115,32 @@ public class MapperThread implements Callable<Boolean> {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        List<String[]> reducerInfo = new ArrayList<>();
+        Scanner fileScanner;
+        File reducerInfoFile = new File(MasterIndexUtil.reducerInfoFileName);
+        try {
+            fileScanner = new Scanner(reducerInfoFile);
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }
+        reducerInfo = new ArrayList<>();
+        while(fileScanner.hasNext()){
+            String[] info = fileScanner.nextLine().split(" ");
+            reducerInfo.add(Arrays.copyOfRange(info, 0, 3));
+        }
+        fileScanner.close();
+
+        MapperThread mt = new MapperThread(
+                new ArrayList<Integer>(Arrays.asList(1)),
+                new ArrayList<File>(Arrays.asList(new File("src/Inputs/anna_karenhina.txt.chunk1"))),
+                reducerInfo
+        );
+        mt.call();
     }
 
 //    private void sendPartialResultToReducer() throws Exception{
