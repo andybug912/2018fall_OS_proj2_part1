@@ -34,4 +34,5 @@ public class MasterIndexUtil {
 
     public static String helperInfoFileName = "server_list.txt";
     public static String reducerInfoFileName = "reducer_list.txt";
+    public static String indexedPathsFileName = "indexedPaths.txt";
 }

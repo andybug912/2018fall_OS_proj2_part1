@@ -126,7 +126,6 @@ public class IndexingMaster {
             while(pos<end && bb.get(pos++)!='\n');
             if(lineNum < maxRows && pos<end) continue;
             Path splitFile = Paths.get(this.path + "/" + bigFile.getName() + ".chunk" + i++);
-            System.out.println(splitFile.toFile().getName());
             try(FileChannel out = FileChannel.open(splitFile, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
                 bb.position(start).limit(pos);
                 while(bb.hasRemaining()) out.write(bb);

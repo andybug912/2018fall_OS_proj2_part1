@@ -78,8 +78,9 @@ public class MapperThread implements Callable<Boolean> {
         while(fileScanner.hasNext()){
             String[] line = fileScanner.nextLine().split(" ");
             for (String wordWithPunctuation: line) {
-                String word = wordWithPunctuation.replaceAll("\\W", "").toLowerCase();
-                if (word.equals("") || word.charAt(0) < 'a' || word.charAt(0) > 'z') continue;
+                String word = wordWithPunctuation.toLowerCase().replaceAll("\\W", " ").trim();
+                if (word.equals("")) continue;
+                if (word.equals("anna")) System.out.println(word);
                 wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
             }
         }

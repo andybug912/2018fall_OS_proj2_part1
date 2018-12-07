@@ -1,6 +1,8 @@
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 public class ServerThread extends Thread {
     private Socket socket;
@@ -20,6 +22,7 @@ public class ServerThread extends Thread {
                 Message message = (Message) input.readObject();
                 Message response;
                 if (message.getTitle().equals("INDEX")) {
+//                    output.reset();
                     System.out.println("Pending to index");
                     String path = message.getPathToBeIndexed();
                     if(this.server.indexedPaths.contains(path)) {   // duplicate indexing request
@@ -30,6 +33,13 @@ public class ServerThread extends Thread {
                     }
                     else {
                         this.server.indexLock.acquire();
+
+                        FileOutputStream outStream = new FileOutputStream(MasterIndexUtil.indexedPathsFileName,true);
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outStream));
+                        bw.write(path + "\n");
+                        bw.close();
+                        outStream.close();
+
                         this.server.indexedPaths.add(path);
                         IndexingMaster indexingMaster = new IndexingMaster(this.server, path);
                         String result = indexingMaster.run();
@@ -40,24 +50,32 @@ public class ServerThread extends Thread {
                     }
                 }
                 else if (message.getTitle().equals("QUERY")){
+//                    output.reset();
                     if (this.server.indexedPaths.size() == 0) {
-//                        System.out.println("No path is already indexed, cannot do querying!");
+                        System.out.println("No path is already indexed, cannot do querying!");
                         response = new Message("No path is already indexed, cannot do querying!");
                         output.writeObject(response);
                         continue;
                     }
                     System.out.println("Pending to query");
-                    this.server.queryLock.acquire();
+//                    this.server.queryLock.acquire();
                     while (!this.server.indexLock.tryAcquire()) {
-                        Thread.sleep(60 * 1000);
+//                        Thread.sleep(60 * 1000);
+                        Thread.sleep(1000);
                     }
 
                     QueryMaster queryMaster = new QueryMaster(this.server, message.getKeyWords());
-                    String result = queryMaster.run();
+//                    String result = queryMaster.run();
+                    PriorityQueue<InvertedIndexItem> pq = queryMaster.run();
 
-                    this.server.queryLock.release();
+                    this.server.indexLock.release();
+//                    this.server.queryLock.release();
 
-                    response = new Message(result);
+                    List<String> result = new ArrayList<>();
+                    for (InvertedIndexItem item: pq) {
+                        result.add(this.server.idToDocument.get(item.fileID) + ": " + item.count);
+                    }
+                    response = new Message("OK", result, true);
                     output.writeObject(response);
                 }
                 else if (message.getTitle().equals("DISCONNECT")) {

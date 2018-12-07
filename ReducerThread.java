@@ -16,7 +16,7 @@ public class ReducerThread extends Thread {
             final ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             final ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
-            this.reducer.indexLock.acquire();   // ?
+            this.reducer.reducerIndexLock.acquire();   // ?
 
             HashMap<Character, Map<String, List<InvertedIndexItem>>> comeMap = (HashMap<Character, Map<String, List<InvertedIndexItem>>>) input.readObject();
             int commingSize = comeMap.size();
@@ -122,7 +122,7 @@ public class ReducerThread extends Thread {
 
             output.writeObject("OK");
 
-            this.reducer.indexLock.release();
+            this.reducer.reducerIndexLock.release();
         }
         catch (Exception e) {
             System.err.println("Error in reducer thread: " + e.getMessage());

@@ -1,11 +1,13 @@
 import java.io.Serializable;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class Message implements Serializable {
     private String title;
     private String pathToBeIndexed;
     private List<String> keyWords;
     private String message;
+    private List<String> queryResult;
 
     public Message(String title) {
         this.title = title;
@@ -21,6 +23,11 @@ public class Message implements Serializable {
         this.keyWords = keyWords;
     }
 
+    public Message(String title, List<String> queryResult, boolean isQuery){
+        this.title = title;
+        this.queryResult = queryResult;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -29,16 +36,8 @@ public class Message implements Serializable {
         return pathToBeIndexed;
     }
 
-    public void setPathToBeIndexed(String pathToBeIndexed) {
-        this.pathToBeIndexed = pathToBeIndexed;
-    }
-
     public List<String> getKeyWords() {
         return keyWords;
-    }
-
-    public void setKeyWords(List<String> keyWords) {
-        this.keyWords = keyWords;
     }
 
     public String getMessage() {
@@ -47,5 +46,9 @@ public class Message implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public List<String> getQueryResult() {
+        return queryResult;
     }
 }

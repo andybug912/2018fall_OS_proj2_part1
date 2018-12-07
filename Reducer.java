@@ -12,7 +12,7 @@ public class Reducer {
     private String validFirstLetters;
     public int firstFileMapNumber;
     public int secondFileMapNumber;
-    public Semaphore indexLock;
+    public Semaphore reducerIndexLock;
 
     public Reducer(int reducerID) {
         myMasterIndexFiles = new HashSet<>();
@@ -42,7 +42,7 @@ public class Reducer {
         }
         fileScanner.close();
 
-        this.indexLock = new Semaphore(1, true);
+        this.reducerIndexLock = new Semaphore(1, true);
     }
 
     public void run() {

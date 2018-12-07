@@ -3,6 +3,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class TinyGoogleClient {
@@ -39,6 +40,7 @@ public class TinyGoogleClient {
                 }
                 else if(request.equals("2")){   // query
                     List<String> keyWords = new ArrayList<>();
+                    System.out.println("Please input the words you want to query(ending with #): ");
                     while(scanner.hasNextLine()){
                         String s = scanner.nextLine();
                         if(!s.equals("#")) {
@@ -50,6 +52,17 @@ public class TinyGoogleClient {
                     }
                     message = new Message("QUERY", keyWords);
                     output.writeObject(message);
+
+                    response = (Message) input.readObject();
+                    if(response.getTitle().equals("OK")){
+                        List<String> queryResult = response.getQueryResult();
+                        for(String s: queryResult){
+                            System.out.println(s);
+                        }
+                    }
+                    else{
+                        System.out.println(response.getTitle());
+                    }
                 }
             }
             catch(Exception e){
