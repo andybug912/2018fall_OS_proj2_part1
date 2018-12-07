@@ -26,4 +26,5 @@
 hs_err_pid*
 *.xml
 *.iml
-test/test.txt
+test/*
+Inputs/*
