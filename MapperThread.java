@@ -77,9 +77,11 @@ public class MapperThread implements Callable<Boolean> {
         while ((originLine = br.readLine()) != null) {
             String[] line = originLine.toLowerCase().split(" ");
             for (String wordWithPunctuation: line) {
-                String word = wordWithPunctuation.replaceAll("[!@#$%^&*()-=+,.?<>\'\"]", " ").trim();
-                if (word.equals("") || word.charAt(0) < 'a' || word.charAt(0) > 'z') continue;
-                wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+                String[] words = wordWithPunctuation.replaceAll("[!@#$%^&*()-=+,.?<>\'\"]", " ").trim().split(" ");
+                for (String word: words) {
+                    if (word.equals("") || word.charAt(0) < 'a' || word.charAt(0) > 'z') continue;
+                    wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+                }
             }
         }
         br.close();
