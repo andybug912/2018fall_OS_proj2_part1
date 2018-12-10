@@ -80,7 +80,13 @@ public class MapperThread implements Callable<Boolean> {
                 String[] words = wordWithPunctuation.replaceAll("[!@#$%^&*()-=+,.?<>\'\"]", " ").trim().split(" ");
                 for (String word: words) {
                     if (word.equals("") || word.charAt(0) < 'a' || word.charAt(0) > 'z') continue;
-                    wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+                    if (wordCount.containsKey(word)) {
+                        wordCount.put(word, wordCount.get(word) + 1);
+                    }
+                    else {
+                        wordCount.put(word, 1);
+                    }
+//                    wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
                 }
             }
         }
