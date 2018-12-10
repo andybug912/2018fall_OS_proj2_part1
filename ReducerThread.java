@@ -47,7 +47,8 @@ public class ReducerThread extends Thread {
                 if( commingMap == null || commingMap.size() == 0) continue;
                 for(String word: commingMap.keySet()) {
                     if(!thismap.containsKey(word)) {
-                        thismap.put(word, new ArrayList<>());
+                        List<InvertedIndexItem> temp = new ArrayList<>();
+                        thismap.put(word, temp);
                         for(InvertedIndexItem iii: commingMap.get(word)){
                             thismap.get(word).add(iii);
                         }
@@ -91,7 +92,8 @@ public class ReducerThread extends Thread {
                 if( commingMap2 == null || commingMap2.size() == 0) continue;
                 for(String word: commingMap2.keySet()) {
                     if(!thismap2.containsKey(word)) {
-                        thismap2.put(word, new ArrayList<>());
+                        List<InvertedIndexItem> temp = new ArrayList<>();
+                        thismap2.put(word, temp);
                         for(InvertedIndexItem iii: commingMap2.get(word)){
                             thismap2.get(word).add(iii);
                         }
