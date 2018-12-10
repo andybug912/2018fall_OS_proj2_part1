@@ -14,8 +14,7 @@ public class QueryMaster {
         this.keyWords = keyWords;
     }
 
-    public PriorityQueue<InvertedIndexItem> run() {
-        // TODO: dispatch key words to helpers
+    public List<InvertedIndexItem> run() {
         try {
             int numOfHelpers = this.server.helperInfo.size() , numOfWords = keyWords.size();
             int helperIndex = 0, wordRangeStart = 0;
@@ -57,13 +56,13 @@ public class QueryMaster {
                 }
             }
 
-            PriorityQueue<InvertedIndexItem> pq = new PriorityQueue<>(new rankingComparator());
+            List<InvertedIndexItem> pq = new ArrayList<>();
             Iterator it2 = mergedResult.entrySet().iterator();
             while(it2.hasNext()){
                 Map.Entry pair = (Map.Entry) it2.next();
                 Integer fileID = (Integer) pair.getKey();
                 Integer score = (Integer) pair.getValue();
-                pq.offer(new InvertedIndexItem(fileID, score));
+                pq.add(new InvertedIndexItem(fileID, score));
             }
 
             return pq;
@@ -75,17 +74,4 @@ public class QueryMaster {
         }
     }
 
-}
-
-class rankingComparator implements Comparator<InvertedIndexItem>, Serializable{
-    @Override
-    public int compare(InvertedIndexItem i1, InvertedIndexItem i2){
-        if(i1.count < i2.count){
-            return 1;
-        }
-        else if(i1.count > i2.count){
-            return -1;
-        }
-        return 0;
-    }
 }

@@ -66,7 +66,7 @@ public class ServerThread extends Thread {
 
                     QueryMaster queryMaster = new QueryMaster(this.server, message.getKeyWords());
 //                    String result = queryMaster.run();
-                    PriorityQueue<InvertedIndexItem> pq = queryMaster.run();
+                    List<InvertedIndexItem> pq = queryMaster.run();
 
                     this.server.indexLock.release();
 //                    this.server.queryLock.release();
