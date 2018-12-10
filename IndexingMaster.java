@@ -102,11 +102,18 @@ public class IndexingMaster {
 
     private List<File> splitFilesIntoChunks(File[] files) {
         List<File> fileChunks = new ArrayList<>();
+
         try {
+            byte[] buffer = new byte[MasterIndexUtil.fileChunkSize];
             for (File file: files) {
-                if (!file.isHidden()) {
-                    List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
-                    fileChunks.addAll(tempList);
+                FileInputStream fis = new FileInputStream(file);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                int byteAmount = 0, chunkID = 0;
+                while ((byteAmount = bis.read(buffer)) > 0) {
+                    File newFile = new File(this.path + "/" + file.getName() + ".chunk" + chunkID++);
+                    FileOutputStream out = new FileOutputStream(newFile);
+                    out.write(buffer, 0, byteAmount);
+                    fileChunks.add(newFile);
                 }
             }
         }
@@ -116,6 +123,23 @@ public class IndexingMaster {
         }
         return fileChunks;
     }
+
+//    private List<File> splitFilesIntoChunks(File[] files) {
+//        List<File> fileChunks = new ArrayList<>();
+//        try {
+//            for (File file: files) {
+//                if (!file.isHidden()) {
+//                    List<File> tempList = splitFile(file, MasterIndexUtil.maxRowOfChunk);
+//                    fileChunks.addAll(tempList);
+//                }
+//            }
+//        }
+//        catch (Exception e) {
+//            System.err.println("222Error: " + e.getMessage());
+//            e.printStackTrace(System.err);
+//        }
+//        return fileChunks;
+//    }
 
     public List<File> splitFile(File bigFile, int maxRows) throws IOException {
         List<File> files = new ArrayList<>();
