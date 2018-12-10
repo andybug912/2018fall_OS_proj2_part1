@@ -84,10 +84,9 @@ public class TinyGoogleServer {
                 int mapNumber = MasterIndexUtil.mapNumber[i];
                 String filename = MasterIndexUtil.filelist[i].substring(12,MasterIndexUtil.filelist[i].length()-4);
                 char[] chOfFileName = filename.toCharArray();
-                HashMap<Character, Map<String, List<InvertedIndexItem>>> map = new HashMap<>();
+                HashMap<Character,Map<String, List<InvertedIndexItem>>> map = new HashMap<>();
                 for(int k = 0; k <= mapNumber - 1; k++){
-                    Map<String, List<InvertedIndexItem>> tempMap = new HashMap<>();
-                    map.put(chOfFileName[k], tempMap);
+                    map.put(chOfFileName[k],new HashMap<>());
                 }
                 FileOutputStream outputStream = new FileOutputStream(MasterIndexUtil.filelist[i]);
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
