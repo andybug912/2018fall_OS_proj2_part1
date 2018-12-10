@@ -1,3 +1,3 @@
-localhost 1111 abcdefg 0 1
-localhost 2222 hijklmnopq 2 3
-localhost 3333 rstuvwxyz 4 5
+arsenic.cs.pitt.edu 1111 abcdefg 0 1
+selenium.cs.pitt.edu 2222 hijklmnopq 2 3
+hydrogen.cs.pitt.edu 3333 rstuvwxyz 4 5
