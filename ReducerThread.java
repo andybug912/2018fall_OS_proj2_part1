@@ -125,6 +125,7 @@ public class ReducerThread extends Thread {
             output.writeObject("OK");
 
             this.reducer.reducerIndexLock.release();
+            socket.close();
         }
         catch (Exception e) {
             System.err.println("Error in reducer thread: " + e.getMessage());

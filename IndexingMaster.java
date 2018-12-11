@@ -86,8 +86,10 @@ public class IndexingMaster {
                 }
             }
             deleteTempChunks(filesInChunks);
-            for (Socket socket: socketList) {
-                socket.close();
+            for (int i = 0; i < socketList.size(); i++) {
+                OrderWrapper closeOrder = new OrderWrapper();
+                outputList.get(i).writeObject(closeOrder);
+                socketList.get(i).close();
             }
             return "OK";
         }

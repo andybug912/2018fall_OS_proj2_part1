@@ -29,14 +29,18 @@ public class MapperThread implements Callable<Boolean> {
             }
             // send partial inverted index to reducer
             int startMapIndex = 0;
-            List<ObjectInputStream> inputs = new ArrayList<>();
+            List<ObjectInputStream> inputList = new ArrayList<>();
+            List<ObjectOutputStream> outputList = new ArrayList<>();
+            List<Socket> socketList = new ArrayList<>();
             for (String[] info: this.reducerInfo) {
                 String serverIP = info[0];
                 int serverPort = Integer.parseInt(info[1]);
                 Socket socket = new Socket(serverIP, serverPort);
+                socketList.add(socket);
                 final ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                outputList.add(output);
                 final ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                inputs.add(input);
+                inputList.add(input);
 
                 String validFirstLetterString = info[2];
                 Set<Character> validFirstLetter = new HashSet<>();
@@ -55,12 +59,17 @@ public class MapperThread implements Callable<Boolean> {
                 output.writeObject(mapToSend);
             }
 
-            for (ObjectInputStream input: inputs) {
+            for (ObjectInputStream input: inputList) {
                 String response = (String) input.readObject();
                 if (response.equals("FAIL")) {
                     return false;
                 }
             }
+
+            for (int i = 0; i < socketList.size(); i++) {
+                socketList.get(i).close();
+            }
+
             return true;
         }
         catch (Exception e) {
@@ -86,7 +95,6 @@ public class MapperThread implements Callable<Boolean> {
                     else {
                         wordCount.put(word, 1);
                     }
-//                    wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
                 }
             }
         }

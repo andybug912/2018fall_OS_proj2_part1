@@ -67,8 +67,10 @@ public class QueryMaster {
                 pq.add(new InvertedIndexItem(fileID, score));
             }
 
-            for (Socket socket: socketList) {
-                socket.close();
+            for (int i = 0; i < socketList.size(); i++) {
+                OrderWrapper closeOrder = new OrderWrapper();
+                outputList.get(i).writeObject(closeOrder);
+                socketList.get(i).close();
             }
 
             return pq;

@@ -28,7 +28,6 @@ public class QueryThread implements Callable<Map<Integer, Integer>> {
                 if (allMaps.get(firstLetter).containsKey(keyWord)) {
                     List<InvertedIndexItem> pq = allMaps.get(firstLetter).get(keyWord);
                     for (InvertedIndexItem item: pq) {
-//                        result.put(item.fileID, result.getOrDefault(item.fileID, 0) + item.count);
                         if (result.containsKey(item.fileID)) {
                             result.put(item.fileID, result.get(item.fileID) + item.count);
                         }

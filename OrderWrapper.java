@@ -22,4 +22,8 @@ public class OrderWrapper implements Serializable {
         this.orderType = MasterIndexUtil.OrderType.QUERY;
         this.queryKeyWords = queryKeyWords;
     }
+
+    public OrderWrapper() {
+        this.orderType = MasterIndexUtil.OrderType.CLOSE;
+    }
 }

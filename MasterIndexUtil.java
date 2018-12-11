@@ -29,7 +29,7 @@ public class MasterIndexUtil {
     public static int defaultMaxNumOfQueryThreads = 3;
 
     public static enum OrderType {
-        INDEX, QUERY
+        INDEX, QUERY, CLOSE
     }
 
     public static String helperInfoFileName = "server_list.txt";
