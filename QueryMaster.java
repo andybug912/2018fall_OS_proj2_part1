@@ -40,8 +40,8 @@ public class QueryMaster {
 
             // merge
             Map<Integer, Integer> mergedResult =  new HashMap<>();
-            for(ObjectInputStream inputStream:inputList){
-                Map<Integer, Integer> map = (Map<Integer, Integer>) inputStream.readObject();
+            for (int i = 0; i < helperIndex; i++) {
+                Map<Integer, Integer> map = (Map<Integer, Integer>) inputList.get(i).readObject();
                 Iterator it = map.entrySet().iterator();
                 while(it.hasNext()){
                     Map.Entry pair = (Map.Entry) it.next();

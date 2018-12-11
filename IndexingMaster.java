@@ -73,8 +73,8 @@ public class IndexingMaster {
                 fileRangeStart = fileRangeEnd + 1;
             }
 
-            for(ObjectInputStream inputStream:inputList){
-                String response = (String) inputStream.readObject();
+            for (int i = 0; i < helperIndex; i++) {
+                String response = (String) inputList.get(i).readObject();
                 if(response.equals("FAIL")){
                     deleteTempChunks();
                     return "FAIL";
