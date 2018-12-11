@@ -1,10 +1,7 @@
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Scanner;
+import java.util.*;
 
 public class TinyGoogleClient {
     private String serverIP;
@@ -56,6 +53,12 @@ public class TinyGoogleClient {
                     response = (Message) input.readObject();
                     if(response.getTitle().equals("OK")){
                         List<String> queryResult = response.getQueryResult();
+                        Collections.sort(queryResult, new Comparator<String>() {
+                            @Override
+                            public int compare(String o1, String o2) {
+                                return Integer.parseInt(o2.split(": ")[1]) - Integer.parseInt(o1.split(": ")[1]);
+                            }
+                        });
                         for(String s: queryResult){
                             System.out.println(s);
                         }
