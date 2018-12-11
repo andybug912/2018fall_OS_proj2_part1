@@ -22,8 +22,10 @@ public class QueryMaster {
 
             List<ObjectOutputStream> outputList = new ArrayList<>();
             List<ObjectInputStream> inputList = new ArrayList<>();
+            List<Socket> socketList = new ArrayList<>();
             for (String[] info: this.server.helperInfo) {
                 Socket socket = new Socket(info[0], Integer.parseInt(info[1]));
+                socketList.add(socket);
                 ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
                 outputList.add(output);
                 ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
@@ -63,6 +65,10 @@ public class QueryMaster {
                 Integer fileID = (Integer) pair.getKey();
                 Integer score = (Integer) pair.getValue();
                 pq.add(new InvertedIndexItem(fileID, score));
+            }
+
+            for (Socket socket: socketList) {
+                socket.close();
             }
 
             return pq;

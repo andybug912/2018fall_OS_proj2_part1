@@ -16,15 +16,15 @@ public class TinyGoogleClient {
     }
 
     public void start(){
-        while (true) {
-            try{
-                // connect to server
-                Socket socket = new Socket(this.serverIP,this.serverPort);
-                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+        Scanner scanner = new Scanner(System.in);
+        try{
+            // connect to server
+            Socket socket = new Socket(this.serverIP,this.serverPort);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
+            while (true) {
                 // index or query
-                Scanner scanner = new Scanner(System.in);
                 System.out.println("1 for INDEX or 2 for QUERY:");
                 String request = scanner.nextLine();
 
@@ -65,11 +65,11 @@ public class TinyGoogleClient {
                     }
                 }
             }
-            catch(Exception e){
-                System.err.println("Error:" + e.getMessage());
-                e.printStackTrace(System.err);
-                return;
-            }
+        }
+        catch(Exception e){
+            System.err.println("Error:" + e.getMessage());
+            e.printStackTrace(System.err);
+            return;
         }
     }
 

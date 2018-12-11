@@ -41,12 +41,14 @@ public class IndexingMaster {
 
             List<ObjectOutputStream> outputList = new ArrayList<>();
             List<ObjectInputStream> inputList = new ArrayList<>();
+            List<Socket> socketList = new ArrayList<>();
             for (String[] info: this.server.helperInfo) {
-                    Socket socket = new Socket(info[0], Integer.parseInt(info[1]));
-                    ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-                    outputList.add(output);
-                    ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
-                    inputList.add(input);
+                Socket socket = new Socket(info[0], Integer.parseInt(info[1]));
+                socketList.add(socket);
+                ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                outputList.add(output);
+                ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+                inputList.add(input);
             }
 
             while (fileRangeStart < numOfFiles) {
@@ -76,11 +78,17 @@ public class IndexingMaster {
             for (int i = 0; i < helperIndex; i++) {
                 String response = (String) inputList.get(i).readObject();
                 if(response.equals("FAIL")){
-                    deleteTempChunks();
+                    deleteTempChunks(filesInChunks);
+                    for (Socket socket: socketList) {
+                        socket.close();
+                    }
                     return "FAIL";
                 }
             }
-            deleteTempChunks();
+            deleteTempChunks(filesInChunks);
+            for (Socket socket: socketList) {
+                socket.close();
+            }
             return "OK";
         }
         catch (Exception e) {
@@ -90,13 +98,9 @@ public class IndexingMaster {
         }
     }
 
-    private void deleteTempChunks() {
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
-        for (File chunk: listOfFiles) {
-            if (chunk.getName().contains(".chunk")) {
-                chunk.delete();
-            }
+    private void deleteTempChunks(List<File> chunks) throws Exception{
+        for (File chunk: chunks) {
+            chunk.delete();
         }
     }
 
@@ -114,7 +118,10 @@ public class IndexingMaster {
                     FileOutputStream out = new FileOutputStream(newFile);
                     out.write(buffer, 0, byteAmount);
                     fileChunks.add(newFile);
+                    out.close();
                 }
+                bis.close();
+                fis.close();
             }
         }
         catch (Exception e) {
