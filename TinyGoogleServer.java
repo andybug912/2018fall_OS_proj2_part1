@@ -24,12 +24,12 @@ public class TinyGoogleServer {
                 indexedPaths.createNewFile();
             }
             else {
-//                fscanner = new Scanner(indexedPaths);
-//                while(fscanner.hasNext()){
-//                    this.indexedPaths.add(fscanner.nextLine());
-//                }
-                indexedPaths.delete();
-                indexedPaths.createNewFile();
+                fscanner = new Scanner(indexedPaths);
+                while(fscanner.hasNext()){
+                    this.indexedPaths.add(fscanner.nextLine());
+                }
+//                indexedPaths.delete();
+//                indexedPaths.createNewFile();
             }
         }
         catch (Exception e){
