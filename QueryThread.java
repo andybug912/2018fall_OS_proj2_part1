@@ -23,10 +23,10 @@ public class QueryThread implements Callable<Map<Integer, Integer>> {
             try {
                 FileInputStream fis = new FileInputStream(fileName);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>> allMaps =
-                        (Map<Character, Map<String, PriorityQueue<InvertedIndexItem>>>) ois.readObject();
+                Map<Character, Map<String, List<InvertedIndexItem>>> allMaps =
+                        (Map<Character, Map<String, List<InvertedIndexItem>>>) ois.readObject();
                 if (allMaps.get(firstLetter).containsKey(keyWord)) {
-                    PriorityQueue<InvertedIndexItem> pq = allMaps.get(firstLetter).get(keyWord);
+                    List<InvertedIndexItem> pq = allMaps.get(firstLetter).get(keyWord);
                     for (InvertedIndexItem item: pq) {
 //                        result.put(item.fileID, result.getOrDefault(item.fileID, 0) + item.count);
                         if (result.containsKey(item.fileID)) {
